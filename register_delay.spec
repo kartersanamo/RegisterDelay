@@ -10,10 +10,11 @@ datas = []
 binaries = []
 hiddenimports = ["register_delay_logic"]
 
-ctk_datas, ctk_binaries, ctk_hiddenimports = collect_all("customtkinter")
-datas += ctk_datas
-binaries += ctk_binaries
-hiddenimports += ctk_hiddenimports
+for package in ("customtkinter", "darkdetect"):
+    pkg_datas, pkg_binaries, pkg_hidden = collect_all(package)
+    datas += pkg_datas
+    binaries += pkg_binaries
+    hiddenimports += pkg_hidden
 
 a = Analysis(
     ["register_delay.py"],

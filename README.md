@@ -51,19 +51,34 @@ Build on the platform you want to run on.
 ```bash
 git clone https://github.com/kartersanamo/RegisterDelay.git
 cd RegisterDelay
+./build.sh
+```
+
+Or manually:
+
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-build.txt
+rm -rf build dist
 pyinstaller --noconfirm register_delay.spec
 ```
 
-Output: `dist/RegisterDelay.app` — drag to Applications or double-click to run.
+Output: `dist/RegisterDelay.app` — open that, **not** the raw binary inside `dist/RegisterDelay/`.
+
+```bash
+open dist/RegisterDelay.app
+```
 
 To zip for upload (e.g. GitHub Releases):
 
 ```bash
 ditto -c -k --sequesterRsrc --keepParent dist/RegisterDelay.app dist/RegisterDelay-macOS.zip
 ```
+
+**Important:** Always build with the venv activated (or use `./build.sh`). Running `pyinstaller` with system Python skips `customtkinter` and the app will fail silently.
+
+**First launch:** Right-click the app → **Open** (unsigned app). macOS may block it in **System Settings → Privacy & Security**.
 
 ### Windows → `.exe`
 
