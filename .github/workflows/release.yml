@@ -26,8 +26,51 @@ jobs:
       - name: Build executable
         run: pyinstaller --noconfirm register_delay.spec
 
-      - name: Upload release asset
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/RegisterDelay.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements-build.txt
+
+      - name: Build app
+        run: pyinstaller --noconfirm register_delay.spec
+
+      - name: Zip app bundle
+        run: ditto -c -k --sequesterRsrc --keepParent dist/RegisterDelay.app dist/RegisterDelay-macOS.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: dist/RegisterDelay-macOS.zip
+
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/RegisterDelay.exe
+          files: |
+            artifacts/windows/RegisterDelay.exe
+            artifacts/macos/RegisterDelay-macOS.zip
           generate_release_notes: true
